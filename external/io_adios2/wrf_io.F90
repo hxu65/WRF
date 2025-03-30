@@ -2484,7 +2484,7 @@ subroutine ext_adios2_write_field(DataHandle,DateStr,Var,Field,FieldType, &
       endif
     endif
     DH%VarIDs(NVar) = VarID
-    print *, "ID：", VarID
+    print *, "ID:", NVar, " the:", VarID
     ! add attribute of dimension names (for reconstructing NetCDF file with converter)
     do j = 1,NDim
       DimNamesOut(j) = DH%DimNames(VDimIDs(j))
