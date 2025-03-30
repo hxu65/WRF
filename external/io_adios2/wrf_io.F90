@@ -2334,14 +2334,17 @@ subroutine ext_adios2_write_field(DataHandle,DateStr,Var,Field,FieldType, &
   lMemoryStart(1:NDim) = MemoryStart(1:NDim)
   lMemoryEnd(1:NDim) = MemoryEnd(1:NDim)
   if(DH%FileStatus == WRF_FILE_NOT_OPENED) then
+    print *, "WRF_FILE_NOT_OPENED"
     Status = WRF_WARN_FILE_NOT_OPENED
     write(msg,*) 'Warning FILE NOT OPENED in ',__FILE__,', line', __LINE__ 
     call wrf_debug ( WARN , TRIM(msg))
   elseif(DH%FileStatus == WRF_FILE_OPENED_FOR_READ) then
+    print *, "WRF_FILE_OPENED_FOR_READ"
     Status = WRF_WARN_WRITE_RONLY_FILE
     write(msg,*) 'Warning WRITE READ ONLY FILE in ',__FILE__,', line', __LINE__ 
     call wrf_debug ( WARN , TRIM(msg))
   elseif(DH%FileStatus == WRF_FILE_OPENED_NOT_COMMITTED) then
+    print *, "WRF_FILE_OPENED_NOT_COMMITTED"
     do NVar=1,MaxVars
       if(DH%VarNames(NVar) == VarName ) then
         Status = WRF_WARN_2DRYRUNS_1VARIABLE
@@ -2481,6 +2484,7 @@ subroutine ext_adios2_write_field(DataHandle,DateStr,Var,Field,FieldType, &
       endif
     endif
     DH%VarIDs(NVar) = VarID
+    print *, "ID：", VarID
     ! add attribute of dimension names (for reconstructing NetCDF file with converter)
     do j = 1,NDim
       DimNamesOut(j) = DH%DimNames(VDimIDs(j))
