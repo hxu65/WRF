@@ -51,10 +51,6 @@ subroutine ext_adios2_RealFieldIO(IO,DataHandle,VarID,VStart,VCount,Data,Status)
     call wrf_debug ( WARN , TRIM(msg))
     return
   endif
-  derived_name = "derived/hash_of_" // trim(VarID%name)
-  derived_expression = "x=" // trim(VarID%name) // " hash(x)"
-  call adios2_define_derived_variable(derived_variable, DH%adios2IO, derived_name, derived_expression, &
-                                        adios2_derived_var_type_store_data, stat)
   if(IO == 'write') then
     call adios2_put(DH%adios2Engine, VarID, Data, adios2_mode_sync, stat)
   else

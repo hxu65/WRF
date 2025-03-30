@@ -2294,7 +2294,10 @@ subroutine ext_adios2_write_field(DataHandle,DateStr,Var,Field,FieldType, &
   integer       ,dimension(NVarDims)           :: lMemoryStart, lMemoryEnd
   character(80),dimension(NVarDims+1)          :: DimNamesOut
   integer                                      :: operation_id
-
+  type(adios2_derived_variable)                :: derived_variable
+  type(adios2_derived_variable)                :: derived_variable2
+  character(len=256)                           :: derived_name
+  character(len=256)                           :: derived_expression
   MemoryOrder = trim(adjustl(MemoryOrdIn))
   NullName=char(0)
   call GetDim(MemoryOrder,NDim,Status)
@@ -2447,6 +2450,10 @@ subroutine ext_adios2_write_field(DataHandle,DateStr,Var,Field,FieldType, &
       call adios2_define_variable(VarID, DH%adios2IO, VarName, XType, &
                                NDim, shape_dims, zero, zero, &
                               adios2_variable_dims, stat)
+      derived_name = "hash_of_" // trim(VarName)
+      derived_expression = "x=" // trim(VarName) // " hash(x)"
+      call adios2_define_derived_variable(derived_variable, DH%adios2IO, derived_name, derived_expression, &
+                                        adios2_derived_var_type_store_data, stat)
     endif
     call adios2_err(stat,Status)
     if(Status /= WRF_NO_ERR) then
