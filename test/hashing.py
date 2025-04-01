@@ -15,7 +15,7 @@ def process_bp5(input_file, output_file):
     # Open input BP5 file
     with adios2.Stream(input_file, "r", comm, "adios2.xml") as fr:
         # Create output BP5 file
-        with adios2.open(output_file, "w", comm, "hashing.xml") as fw:
+        with adios2.Stream(output_file, "w", comm, "hashing.xml") as fw:
             for fr_step in fr:
                 cur_step = fr_step.current_step()
                 available_vars = fr_step.available_variables()
