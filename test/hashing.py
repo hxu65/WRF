@@ -2,7 +2,6 @@ import argparse
 import adios2                               # pylint: disable=import-error
 import numpy as np                          # pylint: disable=import-error
 from mpi4py import MPI                      # pylint: disable=import-error
-from adios2.bindings import DerivedVarType
 
 def setup_args():
     parser = argparse.ArgumentParser()
@@ -14,7 +13,7 @@ def process_bp5(input_file, output_file):
     comm = MPI.COMM_WORLD  # Get MPI communicator
 
     # Open input BP5 file
-    with adios2.open(input_file, "r", comm, "adios2.xml") as fr:
+    with adios2.Stream(input_file, "r", comm, "adios2.xml") as fr:
         # Create output BP5 file
         with adios2.open(output_file, "w", comm, "hashing.xml") as fw:
             for fr_step in fr:
