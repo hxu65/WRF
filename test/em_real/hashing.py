@@ -1,5 +1,5 @@
 import argparse
-import adios2
+from adios2 import Stream
 import numpy as np
 from mpi4py import MPI
 
@@ -13,14 +13,14 @@ def process_bp5(input_file, output_file):
     
     
     
-    fr = Stream(io, input_file, "r", mpi.comm_app)
+    fr = Stream( input_file, "r", MPI.COMM_WORLD)
     # Open input BP5 file
    
 
 
     
     
-    fw = Stream(io2, output_file, "w", MPI.COMM_WORLD)
+    fw = Stream( output_file, "w", MPI.COMM_WORLD)
 
     for fr_step in fr.steps():
         available_vars = fr_step.AvailableVariables()
