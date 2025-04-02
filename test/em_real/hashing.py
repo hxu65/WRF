@@ -11,15 +11,15 @@ def setup_args():
 
 def process_bp5(input_file, output_file):
     
-    adios = Adios("adios2.xml", MPI.COMM_WORLD)
-    io = adios.declare_io("InputIO")
+    
+    
     fr = Stream(io, input_file, "r", mpi.comm_app)
     # Open input BP5 file
    
 
 
-    adios_2 = Adios("hashing.xml", MPI.COMM_WORLD)
-    io2 = adios_2.declare_io("OutputIO")
+    
+    
     fw = Stream(io2, output_file, "w", MPI.COMM_WORLD)
 
     for fr_step in fr.steps():
