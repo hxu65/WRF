@@ -10,44 +10,34 @@ def setup_args():
     return parser.parse_args()
 
 def process_bp5(input_file, output_file):
-    comm = MPI.COMM_WORLD  # Get MPI communicator
-    adios = adios2.ADIOS(comm)  # Initialize ADIOS
     
+    adios = Adios("adios2.xml", MPI.COMM_WORLD)
+    io = adios.declare_io("InputIO")
+    fr = Stream(io, input_file, "r", mpi.comm_app)
     # Open input BP5 file
-    io_in = adios.DeclareIO("InputIO")
-    fr = io_in.Open(input_file, adios2.Mode.Read, comm)
+   
 
-    # Create output BP5 file
-    io_out = adios.DeclareIO("OutputIO")
-    fw = io_out.Open(output_file, adios2.Mode.Write, comm)
 
-    while fr.BeginStep() == adios2.StepStatus.OK:
-        cur_step = fr.CurrentStep()
-        available_vars = io_in.AvailableVariables()
+    adios_2 = Adios("hashing.xml", MPI.COMM_WORLD)
+    io2 = adios_2.declare_io("OutputIO")
+    fw = Stream(io2, output_file, "w", MPI.COMM_WORLD)
+
+    for fr_step in fr.steps():
+        available_vars = fr_step.AvailableVariables()
 
         # Begin writing step
-        fw.BeginStep()
 
         for var_name, var_info in available_vars.items():
             try:
-                # Read metadata to get shape
                 shape = var_info['Shape'].split(',')
                 shape = tuple(map(int, shape)) if shape[0] else ()  # Convert to tuple
 
                 # Read data
-                data = fr.Read(var_name)
-
-                # Define variable in output BP5 file
-                if var_name not in io_out.AvailableVariables():
-                    io_out.DefineVariable(var_name, data, shape, shape, (0,), adios2.ConstantDims)
-
-                # Write data
-                fw.Put(var_name, data)
+                data = fr_step.Read(var_name)
             except Exception as e:
                 print(f"Warning: Could not process variable {var_name}. Error: {e}")
 
-        # End writing step
-        fw.EndStep()
+        
         fr.EndStep()
 
     # Close files
